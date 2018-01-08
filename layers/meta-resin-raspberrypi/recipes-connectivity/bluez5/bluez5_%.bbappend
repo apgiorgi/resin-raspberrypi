@@ -1,23 +1,3 @@
-# disable brcm43438.service unit; instead these operations should be handled from within the
-# user container as on rpi3 uart0 can be switched with uart1, rendering this service unusable
-
-pkg_postinst_${PN}_append_raspberrypi3 () {
-	if [ -n "$D" ]; then
-		OPTS="--root=$D"
-	fi
-	systemctl $OPTS mask brcm43438.service
-}
-
-# apply the same patches we apply for the rpi3. this makes bluetooth on
-# rpi0-wireless actually work.
-# The following was copied from meta-raspberrypi/ - keep it in sync.
-pkg_postinst_${PN}_append_raspberrypi () {
-	if [ -n "$D" ]; then
-		OPTS="--root=$D"
-	fi
-	systemctl $OPTS mask brcm43438.service
-}
-
 # XXX raspberrypi3-64 inherits raspberrypi and raspberrypi3.
 # this is a type of uniq(SRC_URI)
 do_patch_prepend() {
@@ -25,6 +5,10 @@ do_patch_prepend() {
     unique = " ".join(list(set(src_uri.split())))
     d.setVar("SRC_URI", unique)
 }
+
+# apply the same patches we apply for the rpi3. this makes bluetooth on
+# rpi0-wireless actually work.
+# The following was copied from meta-raspberrypi/ - keep it in sync.
 
 SRC_URI_append_raspberrypi = " \
     file://BCM43430A1.hcd \
